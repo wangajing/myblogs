@@ -1,0 +1,14 @@
+
+@-webkit-keyframes twinkling{    /*透明度由0到1*/
+    0%{
+       opacity:0; /*透明度为0*/
+     }
+    100%{
+       opacity:1; /*透明度为1*/
+
+    }
+}
+
+#element{
+   -webkit-animation: twinkling 1s infinite ease-in-out; 
+}
