@@ -16,4 +16,6 @@ My Blog Index
 ----------
 下面是该博客下的所有文章及对应链接：
 
-* [快速实现无密码登录](passwordLess-login.md)
+* [快速实现无密码登录](https://github.com/wangajing/myblogs/blob/master/PasswordLess-login.md)
+* [模版：如何用Markup来写作文章](https://github.com/wangajing/myblogs/blob/master/create-blog-using-md-files-template.md)
+* [CSS: 最简单CSS闪动特效](https://github.com/wangajing/myblogs/blob/master/css/CSS-flash-effects)
