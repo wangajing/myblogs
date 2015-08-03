@@ -19,3 +19,4 @@ My Blog Index
 * [快速实现无密码登录](https://github.com/wangajing/myblogs/blob/master/PasswordLess-login.md)
 * [模版：如何用Markup来写作文章](https://github.com/wangajing/myblogs/blob/master/create-blog-using-md-files-template.md)
 * [CSS: 最简单CSS闪动特效](https://github.com/wangajing/myblogs/blob/master/css/CSS-flash-effects)
+* [Git专家之路](https://github.com/wangajing/myblogs/blob/master/Way-To-Git-Pro.md)
