@@ -247,6 +247,7 @@ commit 的别名，比如：
    git show <remote-name>/<remote-branch> # 是这个remote branch最新的commit
 
 要看可以使用哪些reference，可以到.git目录里面，里面有：
+
     ├── FETCH_HEAD
     ├── HEAD
     ├── ORIG_HEAD
@@ -262,6 +263,7 @@ commit 的别名，比如：
         │   └── teamA
         │       └── master
         └── tags
+        
 上面这些都可以用作commit id。因为他们本来就是commit id的别名。
 
 除了使用ref，还可以使用ref log。 顾名思义，ref log 指的是针对reference变动生成的log。
