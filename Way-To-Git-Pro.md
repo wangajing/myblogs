@@ -263,7 +263,7 @@ commit 的别名，比如：
         │   └── teamA
         │       └── master
         └── tags
-        
+
 上面这些都可以用作commit id。因为他们本来就是commit id的别名。
 
 除了使用ref，还可以使用ref log。 顾名思义，ref log 指的是针对reference变动生成的log。
@@ -324,3 +324,85 @@ Git Stash的操作如下：
       show    -- show the changes recorded in the stash as a diff
 
 因为Git stash比较简单，所以这里不再详细介绍。
+
+Git内部工作原理
+-----------------------------
+在初始化git时，git会创建一个.git的目录：
+
+    ➜  testC  git init
+    Initialized empty Git repository in /Users/ajing/test/testC/.git/
+    ➜  testC git:(master) tree -la
+        .
+        └── .git
+            ├── HEAD
+            ├── branches
+            ├── config
+            ├── description
+            ├── hooks
+            │   ├── applypatch-msg.sample
+            │   ├── commit-msg.sample
+            │   ├── post-update.sample
+            │   ├── pre-applypatch.sample
+            │   ├── pre-commit.sample
+            │   ├── pre-push.sample
+            │   ├── pre-rebase.sample
+            │   ├── prepare-commit-msg.sample
+            │   └── update.sample
+            ├── info
+            │   └── exclude
+            ├── objects
+            │   ├── info
+            │   └── pack
+            └── refs
+                ├── heads
+                └── tags
+refs，hooks，config我们不再详细介绍，正如其名。我们来看objects的目录和内容，从而了解Git内部
+是如何工作的。我们可以把git的存储结构当作一个key－value的数据库存储。 key就是根据object计算出来的
+的SHA1 code。object是使用zlib进行压缩后的value。value有不同的类型，包括：
+
+* blob类型：blob就是文件内容，类似于文件系统中文件的概念。
+* tree类型：tree类型类似于文件系统中目录的概念，里面列出了所有该目录下包含blob和tree。
+* commit类型：其内容是一个commit的描述信息，包括commit message， commit时间，这个commit前的tree
+和这个commit之后的tree。
+
+git-cat-file可以把object的信息和内容出来。我们已经知道HEAD是当前worksplace最新的commit的别名了，
+可以使用如下命令来查看这个object的类型：
+
+    ➜  tags git:(master) git cat-file -t HEAD
+    commit
+
+使用如下命令将commit存储的内容打印出来。
+
+    ➜  tags git:(master) git cat-file -p HEAD
+    tree 20d12596510c54eaa0cbf87339f575c9485af839
+    parent 4e6c2e4a1e313cde2f3de4db492a703d9f18d531
+    author Ajing Wang <ajing@amazon.com> 1438886101 -0700
+    committer Ajing Wang <ajing@amazon.com> 1438886101 -0700
+
+    hello,world
+
+内容的第一行是当前commit对应的目录树的object id和这个commit之前的目录书的object id。 接下来的
+两个时author 和 committer及对应的时间。
+
+用如下内容来看看tree里面的东西：
+
+    ➜  tags git:(master) git cat-file -p 20d12596510c54eaa0cbf87339f575c9485af839
+    100644 blob 30cd2b0e8111a9d4a98a797e3b6e0c0d09d97d2c	1.txt
+    100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391	2.txt
+    100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391	3.txt
+    100644 blob 5f4973658e0e830fb07ffceb71edd4f0cd042f1c	offical.txt
+    040000 tree c869950735476ff3b1b16847457b2ac8b581b5dc	test
+
+可以看到这个tree里面的内容，指向了对应版本文件的object id，也可以指向子目录如上的test对应的是tree。
+我们再来看看blob类型里面的数据：
+
+    ➜  tags git:(master) git cat-file -p 5f4973658e0e830fb07ffceb71edd4f0cd042f1c
+    add officals.txt
+
+通过上面的分析，我们可以知道git如何存储文件的。也就是没修改一个文件，就会这个文件对应的object，那
+如果文件很大，岂不是每修改一下，对象的空间就会增长一倍？ 为了避免这个问题，git引入了packobject，也就是
+object目录下面的pack目录，里面有两种类型的文件，一种是.pack，另一种是.idx。 git将多个commit给打包
+起来，放到.pack里面。.idx则是.pack的索引文件，帮助git来解析.pack文件。
+
+综上所述，我们可以大体了解git是如何存储diff的。借助key value的数据库，git实现了复杂的树
+的关系的变化。
