@@ -402,7 +402,9 @@ git-cat-file可以把object的信息和内容出来。我们已经知道HEAD是�
 通过上面的分析，我们可以知道git如何存储文件的。也就是没修改一个文件，就会这个文件对应的object，那
 如果文件很大，岂不是每修改一下，对象的空间就会增长一倍？ 为了避免这个问题，git引入了packobject，也就是
 object目录下面的pack目录，里面有两种类型的文件，一种是.pack，另一种是.idx。 git将多个commit给打包
-起来，放到.pack里面。.idx则是.pack的索引文件，帮助git来解析.pack文件。
+起来，放到.pack里面。.idx则是.pack的索引文件，帮助git来解析.pack文件。在本地正常模式下，git不会
+pack Data， 只有当要把code push到远程服务器时，git会压缩文件，将内容push到远程。也可以运行git gc
+来实现这个功能。
 
 综上所述，我们可以大体了解git是如何存储diff的。借助key value的数据库，git实现了复杂的树
 的关系的变化。
